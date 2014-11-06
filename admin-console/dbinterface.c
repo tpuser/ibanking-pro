@@ -2,19 +2,19 @@
 
 #define UNUSED(x) (void)x;
 
-static int callbackCountRows(void *param, int argc, char **argv, char **azColName)
+static int callbackRowExists(void *boolParam, int argc, char **argv, char **azColName)
 {
-    int *result = (int*)param;
+    bool *result = (bool*)boolParam;
 
     UNUSED(argv);
     UNUSED(azColName);
-    *result = argc;
+    *result = (argc != 0);
     return 0;
 }
 
-static int callbackGetGroup(void *param, int argc, char **argv, char **azColName)
+static int callbackGetUserGroup(void *intParam, int argc, char **argv, char **azColName)
 {
-    int *result = (int*)param;
+    int *result = (int*)intParam;
 
     UNUSED(azColName);
     if ((argc < 1) || (sscanf(argv[0], "%d", result) != 1))
@@ -26,27 +26,27 @@ static int callbackGetGroup(void *param, int argc, char **argv, char **azColName
 bool loginExists(sqlite3 *db, const char *login)
 {
     char *query;
-    int result = 0;
+    bool result = false;
 
     query = malloc(strlen("select * from users where login=\"%s\"") + strlen(login) + 1);
     sprintf(query, "select * from users where login=\"%s\"", login);
-    sqlite3_exec(db, query, callbackCountRows, (void*)&result, NULL);
+    sqlite3_exec(db, query, callbackRowExists, (void*)&result, NULL);
     free(query);
 
-    return (result != 0);
+    return result;
 }
 
 bool checkPassword(sqlite3 *db, const char *login, const char *password)
 {
     char *query;
-    int result = 0;
+    bool result = false;
 
     query = malloc(strlen("select * from users where login=\"%s\" and password=\"%s\"") + strlen(login) + 1);
     sprintf(query, "select * from users where login=\"%s\" and password=\"%s\"", login, password);
-    sqlite3_exec(db, query, callbackCountRows, (void*)&result, NULL);
+    sqlite3_exec(db, query, callbackRowExists, (void*)&result, NULL);
     free(query);
 
-    return (result != 0);
+    return result;
 }
 
 int getUserGroup(sqlite3 *db, const char *login)
@@ -56,7 +56,7 @@ int getUserGroup(sqlite3 *db, const char *login)
 
     query = malloc(strlen("select role from users where login=\"%s\"") + strlen(login) + 1);
     sprintf(query, "select role from users where login=\"%s\"", login);
-    sqlite3_exec(db, query, callbackGetGroup, (void*)&result, NULL);
+    sqlite3_exec(db, query, callbackGetUserGroup, (void*)&result, NULL);
     free(query);
 
     return result;

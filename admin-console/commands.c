@@ -1,5 +1,12 @@
 #include "commands.h"
 
+const char *ADMIN_COMMANDS[] = {COMMAND_1};
+const char *OPERATOR_COMMANDS[] = {COMMAND_2};
+const char *COMMON_COMMANDS[] = {COMMAND_HELP, COMMAND_EXIT};
+const int ADMIN_COMMANDS_COUNT = 1;
+const int OPERATOR_COMMANDS_COUNT = 1;
+const int COMMON_COMMANDS_COUNT = 2;
+
 bool commandExists(const char *command)
 {
     if (command == NULL)
@@ -92,6 +99,7 @@ bool executeCommand(sqlite3 *db, const char *command)
     int paramsCount;
     int i;
 
+    (void)db;   // unused
     // parse command
     paramsCount = countWords(command);
     params = malloc(sizeof(char*) * paramsCount);

@@ -4,6 +4,13 @@
 #include <ctype.h>
 #include <sqlite3.h>
 
+#ifdef WIN32
+#include <windows.h>
+#else
+#include <termios.h>
+#include <unistd.h>
+#endif
+
 #include "bool.h"
 #include "dbinterface.h"
 #include "commands.h"
@@ -18,6 +25,32 @@
 #define PASSWORD_RETRY_COUNT 3
 
 static const char DEFAULT_DB_FILENAME[] = "../db.sqlite";
+
+void setStdinEcho(bool enable)
+{
+#ifdef WIN32
+    HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
+    DWORD mode;
+    GetConsoleMode(hStdin, &mode);
+
+    if(!enable)
+        mode &= ~ENABLE_ECHO_INPUT;
+    else
+        mode |= ENABLE_ECHO_INPUT;
+
+    SetConsoleMode(hStdin, mode );
+
+#else
+    struct termios tty;
+    tcgetattr(STDIN_FILENO, &tty);
+    if( !enable )
+        tty.c_lflag &= ~ECHO;
+    else
+        tty.c_lflag |= ECHO;
+
+    (void) tcsetattr(STDIN_FILENO, TCSANOW, &tty);
+#endif
+}
 
 int main(int argc, char *argv[])
 {
@@ -60,7 +93,7 @@ Login:
     while (scanf("%"XSTR(MAX_LOGIN_SIZE)"s", login) != 1) {}
     while (!loginExists(db, login))
     {
-        printf("login %s does not exist, try again\n", login);
+        printf("login %s does not exist\n", login);
         printf("login: ");
         while (scanf("%"XSTR(MAX_LOGIN_SIZE)"s", login) != 1) {}
     }
@@ -68,12 +101,19 @@ Login:
     // password
     retryCount = 1;
     printf("password: ");
+    setStdinEcho(false);    // hide password input
     while (scanf("%"XSTR(MAX_PASSWORD_SIZE)"s", password) != 1) {}
+    setStdinEcho(true);
+    printf("\n");
     while (!checkPassword(db, login, password))
     {
+        sleep(2);
         printf("wrong password, try again\n");
         printf("password: ");
+        setStdinEcho(false);    // hide password input
         while (scanf("%"XSTR(MAX_PASSWORD_SIZE)"s", password) != 1) {}
+        setStdinEcho(true);
+        printf("\n");
         if ((++retryCount) >= PASSWORD_RETRY_COUNT)
         {
             printf("sorry, failed to login, try again\n\n");

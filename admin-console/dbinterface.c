@@ -28,8 +28,8 @@ bool loginExists(sqlite3 *db, const char *login)
     char *query;
     bool result = false;
 
-    query = malloc(strlen("select * from users where login=\"%s\"") + strlen(login) + 1);
-    sprintf(query, "select * from users where login=\"%s\"", login);
+    query = malloc(strlen("select login from users where login=\"%s\"") + strlen(login) + 1);
+    sprintf(query,        "select login from users where login=\"%s\"", login);
     sqlite3_exec(db, query, callbackRowExists, (void*)&result, NULL);
     free(query);
 
@@ -41,8 +41,8 @@ bool checkPassword(sqlite3 *db, const char *login, const char *password)
     char *query;
     bool result = false;
 
-    query = malloc(strlen("select * from users where login=\"%s\" and password=\"%s\"") + strlen(login) + 1);
-    sprintf(query, "select * from users where login=\"%s\" and password=\"%s\"", login, password);
+    query = malloc(strlen("select login from users where login=\"%s\" and password=\"%s\"") + strlen(login) + 1);
+    sprintf(query,        "select login from users where login=\"%s\" and password=\"%s\"", login, password);
     sqlite3_exec(db, query, callbackRowExists, (void*)&result, NULL);
     free(query);
 
@@ -55,7 +55,7 @@ int getUserGroup(sqlite3 *db, const char *login)
     int result = 0;
 
     query = malloc(strlen("select role from users where login=\"%s\"") + strlen(login) + 1);
-    sprintf(query, "select role from users where login=\"%s\"", login);
+    sprintf(query,        "select role from users where login=\"%s\"", login);
     sqlite3_exec(db, query, callbackGetUserGroup, (void*)&result, NULL);
     free(query);
 

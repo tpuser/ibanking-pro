@@ -46,7 +46,7 @@ void deleteCustomer(sqlite3 *db) {
 void deleteAccount(sqlite3 *db) {
 	int idAccount;
 	int rc;
-
+	char sql[200], *zErrMsg = 0;
 	printf("Enter ACCOUNT ID >> ");
 	scanf("%d", &idAccount);
 	sprintf(sql, "DELETE FROM account WHERE  (accountID = '%d');", idAccount);

@@ -1,0 +1,4 @@
+update account set balance = 200 where accountid = 0;
+select * from account;
+rollback;
+commit;

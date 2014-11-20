@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
     }
 
     // open database file
-    if (sqlite3_open_v2(dbFilename, &db, SQLITE_OPEN_READONLY, NULL) == SQLITE_OK)
+    if (sqlite3_open_v2(dbFilename, &db, SQLITE_OPEN_READWRITE, NULL) == SQLITE_OK)
         printf("opened database file %s\n", dbFilename);
     else
         return printf("failed to open database file: %s\n", dbFilename);

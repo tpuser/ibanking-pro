@@ -20,6 +20,8 @@ sqlite3_stmt * query;
 //Callback for checking
 static int callbackCheckAcc(void *cursum, int argc, char **argv, char **azColName)
 {
+    (void)argc;         // unused
+    (void)azColName;    // unused
     double * sum = (double*)cursum;
     sscanf(argv[0], "%lf", sum);
     return 0;
@@ -67,7 +69,7 @@ void commandHelp()
     printf("\t%s - debit \"id\" \"sum\"\n", COMMAND_DEB);
     printf("\t%s - credit \"id\" \"sum\"\n", COMMAND_CRED);
     printf("\t%s - check state \"id\" \n", COMMAND_CHCK);
-    printf("\t%s - transfer \"from_id\" \"to_id\"\ \"sum\"\n", COMMAND_TRANSF);
+    printf("\t%s - transfer \"from_id\" \"to_id\" \"sum\"\n", COMMAND_TRANSF);
     printf("\t%s - undo\n", COMMAND_UNDO);
     printf("\t%s - commit\n", COMMAND_COMMIT);
 }
@@ -205,7 +207,7 @@ bool executeCommand(sqlite3 *db, const char *command)
     if ((paramsCount >= 1) && (!strcmp(params[0], COMMAND_2)))
         command2();
 
-    if ((paramsCount >= 1) && (!strcmp(params[0], COMMAND_TRANSF)))
+    if ((paramsCount >= 4) && (!strcmp(params[0], COMMAND_TRANSF)))
     {
         sscanf(params[1], "%i", &from);
         sscanf(params[3], "%lf", &sum);
@@ -215,7 +217,7 @@ bool executeCommand(sqlite3 *db, const char *command)
         debit(db, to, sum);
     }
 
-    if ((paramsCount >= 1) && (!strcmp(params[0], COMMAND_DEB)))
+    if ((paramsCount >= 3) && (!strcmp(params[0], COMMAND_DEB)))
     {
         sscanf(params[1], "%i", &from);
         sscanf(params[2], "%lf", &sum);
@@ -223,7 +225,7 @@ bool executeCommand(sqlite3 *db, const char *command)
         debit(db, to, sum);
     }
 
-    if ((paramsCount >= 1) && (!strcmp(params[0], COMMAND_CRED)))
+    if ((paramsCount >= 3) && (!strcmp(params[0], COMMAND_CRED)))
     {
         sscanf(params[1], "%i", &to);
         sscanf(params[2], "%lf", &sum);
@@ -231,7 +233,7 @@ bool executeCommand(sqlite3 *db, const char *command)
         credit(db, to, sum);
     }
 
-    if ((paramsCount >= 1) && (!strcmp(params[0], COMMAND_CHCK)))
+    if ((paramsCount >= 2) && (!strcmp(params[0], COMMAND_CHCK)))
     {
         sscanf(params[1], "%i", &to);
         checkAccount(db, to);

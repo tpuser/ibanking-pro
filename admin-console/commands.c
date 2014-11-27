@@ -1,13 +1,13 @@
 #include "commands.h"
-
+#include "dbinterface.h"
 const char *ADMIN_COMMANDS[] = {COMMAND_1, COMMAND_TRANSF};
 const char *OPERATOR_COMMANDS[] = {COMMAND_2};
-const char *COMMON_COMMANDS[] = {COMMAND_HELP, COMMAND_EXIT,
+const char *COMMON_COMMANDS[] = {COMMAND_EXIT, COMMAND_HELP,
                                  COMMAND_DEB, COMMAND_CRED, COMMAND_CHCK,
-                                 COMMAND_UNDO, COMMAND_COMMIT};
+                                 COMMAND_UNDO, COMMAND_COMMIT, COMMAND_SHOW};
 const int ADMIN_COMMANDS_COUNT = 2;
 const int OPERATOR_COMMANDS_COUNT = 1;
-const int COMMON_COMMANDS_COUNT = 7;
+const int COMMON_COMMANDS_COUNT = 8;
 
 //Last error
 int error;
@@ -17,40 +17,31 @@ int error;
 char * statement;
 sqlite3_stmt * query;
 
-//Callback for checking
-static int callbackCheckAcc(void *cursum, int argc, char **argv, char **azColName)
-{
-    double * sum = (double*)cursum;
-    sscanf(argv[0], "%lf", sum);
-    return 0;
-}
+
 
 //
 bool commandExists(const char *command)
 {
+    int i;
     if (command == NULL)
         return false;
-
-    if (!strcmp(command, COMMAND_EXIT))
-        return true;
-    if (!strcmp(command, COMMAND_HELP))
-        return true;
-    if (!strcmp(command, COMMAND_1))
-        return true;
-    if (!strcmp(command, COMMAND_2))
-        return true;
-    if (!strcmp(command, COMMAND_TRANSF))
-        return true;
-    if (!strcmp(command, COMMAND_DEB))
-        return true;
-    if (!strcmp(command, COMMAND_CRED))
-        return true;
-    if (!strcmp(command, COMMAND_CHCK))
-        return true;
-    if (!strcmp(command, COMMAND_UNDO))
-        return true;
-    if (!strcmp(command, COMMAND_COMMIT))
+    for (i = 0; i < COMMON_COMMANDS_COUNT; ++i)
+    {
+        if (!strcmp(command, COMMON_COMMANDS[i]))
             return true;
+    }
+    for (i = 0; i < ADMIN_COMMANDS_COUNT; ++i)
+    {
+        if (!strcmp(command, ADMIN_COMMANDS[i]))
+            return true;
+    }
+    for (i = 0; i < OPERATOR_COMMANDS_COUNT; ++i)
+    {
+        if (!strcmp(command, OPERATOR_COMMANDS[i]))
+            return true;
+    }
+
+
 
 
     return false;
@@ -84,35 +75,38 @@ void command2()
 
 void commit(sqlite3 *db)
 {
-    error = sqlite3_prepare_v2(db, "commit;", 8, &query, NULL);
-    error = sqlite3_step(query);
-    sqlite3_reset(query);
-    error = sqlite3_prepare_v2(db, "begin;", 7, &query, NULL);
-    error = sqlite3_step(query);
-    sqlite3_reset(query);
+    managTransaction(db, 0);
 }
 
 void undo(sqlite3 *db)
 {
-    error = sqlite3_prepare_v2(db, "rollback;", 10, &query, NULL);
-    error = sqlite3_step(query);
-    sqlite3_reset(query);
+    managTransaction(db, 1);
 }
 
 void debit(sqlite3 *db, int acc_id, double sumtoget)
 {
-    statement = (char*)calloc(200, sizeof(char));
-    sprintf(statement, "update account set balance = balance - %lf where accountID = %i;",
-            sumtoget, acc_id);
-    error = sqlite3_prepare_v2(db, statement, strlen(statement)+1, &query, NULL);
-    free(statement);
-    error = sqlite3_step(query);
-    sqlite3_reset(query);
+    char * acc, * sum;
+    acc = calloc(100, sizeof(char));
+    sum = calloc(100, sizeof(char));
+    sprintf(acc, "%i", acc_id);
+    sprintf(sum, "%lf", - sumtoget);
+
+    updateBalance(db, acc, sum);
+    free(acc);
+    free(sum);
 }
 
 void credit(sqlite3 *db, int acc_id, double sumtopush)
 {
-    debit (db, acc_id, -sumtopush);
+    char * acc, * sum;
+    acc = calloc(100, sizeof(char));
+    sum = calloc(100, sizeof(char));
+    sprintf(acc, "%i", acc_id);
+    sprintf(sum, "%lf", sumtopush);
+
+    updateBalance(db, acc, sum);
+    free(acc);
+    free(sum);
 }
 
 void transfer(sqlite3 *db, int acc_from, int acc_to, double sum)
@@ -121,13 +115,24 @@ void transfer(sqlite3 *db, int acc_from, int acc_to, double sum)
     credit(db, acc_to, sum);
 }
 
-void checkAccount(sqlite3 *db, int acc_id)
+void checkAccount (sqlite3 *db, int acc_id)
 {
     double sum;
-    statement = (char*)calloc(200, sizeof(char));
-    sprintf(statement, "select balance from account where accountid = %i", acc_id);
-    sqlite3_exec(db, statement, callbackCheckAcc, &sum, NULL);
+    char * acc;
+    acc = calloc(100, sizeof(char));
+    sprintf(acc, "%i", acc_id);
+    checkBalance(db, acc, &sum);
+    free(acc);
     printf("balance (of id = %i) = %lf\n", acc_id, sum);
+}
+
+void showAll(sqlite3 * db)
+{
+    char * res;
+    res = calloc(2000, sizeof(char));
+    strcat(res, "\n");
+    showInfo(db, res);
+    printf(res);
 }
 
 // PARSING
@@ -220,7 +225,7 @@ bool executeCommand(sqlite3 *db, const char *command)
         sscanf(params[1], "%i", &from);
         sscanf(params[2], "%lf", &sum);
         if (sum < 0 ) return false;
-        debit(db, to, sum);
+        debit(db, from, sum);
     }
 
     if ((paramsCount >= 1) && (!strcmp(params[0], COMMAND_CRED)))
@@ -242,6 +247,9 @@ bool executeCommand(sqlite3 *db, const char *command)
 
     if ((paramsCount >= 1) && (!strcmp(params[0], COMMAND_COMMIT)))
         commit(db);
+
+    if ((paramsCount >= 1) && (!strcmp(params[0], COMMAND_SHOW)))
+        showAll(db);
 
     for (i=0; i<paramsCount; i++)
         free(params[i]);

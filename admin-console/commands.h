@@ -20,6 +20,7 @@ static const char COMMAND_CHCK[] = "check";
 static const char COMMAND_TRANSF[] = "transfer";
 static const char COMMAND_UNDO[] = "undo";
 static const char COMMAND_COMMIT[] = "cmit";
+static const char COMMAND_SHOW[] = "show";
 
 static const int ADMIN_GROUP = 0;
 static const int OPERATOR_GROUP = 1;
@@ -37,4 +38,5 @@ void checkAccount(sqlite3 *db,int acc_id);
 void transfer(sqlite3 *db, int acc_from, int acc_to, double sum);
 void undo(sqlite3 *db);
 void commit(sqlite3 *db);
+void showAll(sqlite3 * db);
 #endif // COMMANDS_H

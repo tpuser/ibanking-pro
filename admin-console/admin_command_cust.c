@@ -1,8 +1,8 @@
 #include "admin_command_cust.h"
 
 static int callbackLoginCustomer(void *NotUsed, int argc, char **argv, char **azColName){
-	int i;
 	int* id = (int*)NotUsed;
+    (void)azColName;        // unused
 
 	if(argc > 0)
 		*id = atoi(argv[0]);
@@ -40,7 +40,7 @@ void deleteCustomer(sqlite3 *db) {
 	//Delete custumer
 	sprintf(sql, "DELETE FROM customers WHERE  (login = '%s');", newLogin);
 	rc = sqlite3_exec(db, sql,  0, 0, &zErrMsg);
-
+    (void)rc;       // unused;
 }
 
 void deleteAccount(sqlite3 *db) {
@@ -51,6 +51,7 @@ void deleteAccount(sqlite3 *db) {
 	scanf("%d", &idAccount);
 	sprintf(sql, "DELETE FROM account WHERE  (accountID = '%d');", idAccount);
 	rc = sqlite3_exec(db, sql,  0, 0, &zErrMsg);
+    (void)rc;       // unused;
 }
 
 void addAccount(sqlite3 *db) {
@@ -90,4 +91,5 @@ void addAccount(sqlite3 *db) {
 
 		rc = sqlite3_exec(db, sql,  0, 0, &zErrMsg);
 	}
+    (void)rc;       // unused;
 }

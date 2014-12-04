@@ -17,16 +17,6 @@ int error;
 char * statement;
 sqlite3_stmt * query;
 
-//Callback for checking
-static int callbackCheckAcc(void *cursum, int argc, char **argv, char **azColName)
-{
-    (void)argc;         // unused
-    (void)azColName;    // unused
-    double * sum = (double*)cursum;
-    sscanf(argv[0], "%lf", sum);
-    return 0;
-}
-
 //
 bool commandExists(const char *command)
 {
@@ -140,7 +130,7 @@ void showAll(sqlite3 * db)
     res = calloc(2000, sizeof(char));
     strcat(res, "\n");
     showInfo(db, res);
-    printf(res);
+    printf("%s", res);
 }
 
 // PARSING

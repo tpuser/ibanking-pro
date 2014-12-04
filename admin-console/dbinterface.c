@@ -12,6 +12,8 @@ const char * MAN_QRS[] = {UPD_BALANCE, COMMIT, BEGIN, ROLLBACK, CHECK_BALANCE, S
 //Callback for checking
 static int callbackCheckAcc(void *cursum, int argc, char **argv, char **azColName)
 {
+    (void)argc;         // unused
+    (void)azColName;    // unused
     double * sum = (double*)cursum;
     sscanf(argv[0], "%lf", sum);
     return 0;
@@ -19,6 +21,7 @@ static int callbackCheckAcc(void *cursum, int argc, char **argv, char **azColNam
 
 static int callbackShowInfo(void *res, int argc, char **argv, char **azColName)
 {
+    (void)azColName;    // unused
     int i = 0;
     char * sum = (char*)res;
     for (i = 0; i < argc; ++i)
@@ -113,7 +116,6 @@ int managTransaction(sqlite3 * db, int trans)
 
 bool showInfo(sqlite3 * db, char * res)
 {
-    char *query;
     bool result = false;
     sqlite3_exec(db, SHOW, callbackShowInfo, (void*)res, NULL);
 
@@ -139,7 +141,6 @@ int checkBalance(sqlite3 *db, char * acc_id, double * balance)
 {
     char *statement;
     int error = 0;
-    sqlite3_stmt * query;
 
     statement = calloc(strlen(CHECK_BALANCE) + strlen(acc_id) + 1, sizeof(char));
     sprintf(statement, CHECK_BALANCE, acc_id);

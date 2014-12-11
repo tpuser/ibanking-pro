@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <sqlite3.h>
+#include "sqlite3.h"
 
 #include "bool.h"
 #include "dbinterface.h"

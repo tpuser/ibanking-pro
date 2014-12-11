@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <sqlite3.h>
+#include "sqlite3.h"
 
 #ifdef WIN32
 #include <windows.h>

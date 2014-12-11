@@ -7,7 +7,7 @@ SOURCES += main.c \
     commands.c \
     dbinterface.c\
     admin_command_cust.c
-LIBS += -lsqlite3
+#LIBS += -lsqlite3
 
 HEADERS += \
     commands.h \

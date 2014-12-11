@@ -6,7 +6,7 @@
 
 CC            = gcc
 CFLAGS        = -Wall
-LIBS          = -lsqlite3
+LIBS          = -pthread -ldl
 
 ####### Files
 

@@ -11,33 +11,25 @@ LIBS          = -pthread -ldl
 ####### Files
 
 SOURCES = main.c \
-		testing.c \
 		commands.c \
 		dbinterface.c \
 		admin_command_cust.c \
 		sqlite3.c
-OBJECTS = commands.o \
+OBJECTS = main.o \
+		commands.o \
 		dbinterface.o \
 		admin_command_cust.o \
 		sqlite3.o
 
 TARGET  = admin-console
-#TEST_TARGET = test
 
 ####### Build rules
 
-#all: $(TARGET) tests
 all: $(TARGET)
 
-#tests: testing.o
-#	$(CC) $(CFLAGS) testing.o $(OBJECTS) $(LIBS) -o $(TEST_TARGET)
-
 clean:
-#	$(RM) -f $(TARGET) $(TEST_TARGET) *.o *~
 	$(RM) -f $(TARGET) *.o *~
 
-#$(TARGET): $(OBJECTS) main.o
-#	$(CC) $(CFLAGS) main.o $(OBJECTS) $(LIBS) -o $(TARGET)
 $(TARGET):  $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) $(LIBS) -o $(TARGET)
 

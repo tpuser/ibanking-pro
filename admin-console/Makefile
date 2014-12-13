@@ -22,20 +22,24 @@ OBJECTS = commands.o \
 		sqlite3.o
 
 TARGET  = admin-console
-TEST_TARGET = test
+#TEST_TARGET = test
 
 ####### Build rules
 
-all: $(TARGET) tests
+#all: $(TARGET) tests
+all: $(TARGET)
 
-tests: testing.o
-	$(CC) $(CFLAGS) testing.o $(OBJECTS) $(LIBS) -o $(TEST_TARGET)
+#tests: testing.o
+#	$(CC) $(CFLAGS) testing.o $(OBJECTS) $(LIBS) -o $(TEST_TARGET)
 
 clean:
-	$(RM) -f $(TARGET) $(TEST_TARGET) *.o *~
+#	$(RM) -f $(TARGET) $(TEST_TARGET) *.o *~
+	$(RM) -f $(TARGET) *.o *~
 
-$(TARGET): $(OBJECTS) main.o
-	$(CC) $(CFLAGS) main.o $(OBJECTS) $(LIBS) -o $(TARGET)
+#$(TARGET): $(OBJECTS) main.o
+#	$(CC) $(CFLAGS) main.o $(OBJECTS) $(LIBS) -o $(TARGET)
+$(TARGET):  $(OBJECTS)
+	$(CC) $(CFLAGS) $(OBJECTS) $(LIBS) -o $(TARGET)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $<

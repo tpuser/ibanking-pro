@@ -26,13 +26,13 @@ TEST_TARGET = test
 
 ####### Build rules
 
-all: $(TARGET) tests
-
-tests: testing.o
-	$(CC) $(CFLAGS) testing.o $(OBJECTS) $(LIBS) -o $(TEST_TARGET)
+all: $(TARGET) $(TEST_TARGET)
 
 clean:
 	$(RM) -f $(TARGET) $(TEST_TARGET) *.o *~
+
+$(TEST_TARGET): testing.o
+	$(CC) $(CFLAGS) testing.o $(OBJECTS) $(LIBS) -o $(TEST_TARGET)
 
 $(TARGET): $(OBJECTS) main.o
 	$(CC) $(CFLAGS) main.o $(OBJECTS) $(LIBS) -o $(TARGET)

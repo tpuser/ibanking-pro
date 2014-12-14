@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <sqlite3.h>
 
 #include "bool.h"
 #include "dbinterface.h"
@@ -25,8 +23,6 @@ void logTestResult(const char *msg, bool result)
 
 int main(int argc, char *argv[])
 {
-    char *dbFilename = NULL;
-    sqlite3 *db;
     bool status = true;
 
     // test function commandExists

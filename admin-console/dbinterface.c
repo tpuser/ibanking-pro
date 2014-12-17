@@ -122,6 +122,14 @@ bool showInfo(sqlite3 * db, char * res)
     return result;
 }
 
+
+bool showLogger(sqlite3 * db, char * result){
+    bool finalResult = false;
+    sqlite3_exec(db, SHOW, callbackShowInfo, (void*)result, NULL);
+
+    return finalResult;
+}
+
 int updateBalance(sqlite3 *db, char * acc_id, char * sum)
 {
     char *statement;

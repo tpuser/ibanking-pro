@@ -4,7 +4,7 @@ const char *ADMIN_COMMANDS[] = {COMMAND_1, COMMAND_TRANSF};
 const char *OPERATOR_COMMANDS[] = {COMMAND_2};
 const char *COMMON_COMMANDS[] = {COMMAND_EXIT, COMMAND_HELP,
                                  COMMAND_DEB, COMMAND_CRED, COMMAND_CHCK,
-                                 COMMAND_UNDO, COMMAND_COMMIT, COMMAND_SHOW};
+                                 COMMAND_UNDO, COMMAND_COMMIT, COMMAND_SHOW, COMMAND_LOGGER };
 const int ADMIN_COMMANDS_COUNT = 2;
 const int OPERATOR_COMMANDS_COUNT = 1;
 const int COMMON_COMMANDS_COUNT = 8;
@@ -39,9 +39,6 @@ bool commandExists(const char *command)
             return true;
     }
 
-
-
-
     return false;
 }
 
@@ -59,6 +56,7 @@ void commandHelp()
     printf("\t%s - transfer \"from_id\" \"to_id\" \"sum\"\n", COMMAND_TRANSF);
     printf("\t%s - undo\n", COMMAND_UNDO);
     printf("\t%s - commit\n", COMMAND_COMMIT);
+    printf("\t%s - logging\n", COMMAND_LOGGER);
 }
 
 void command1()
@@ -131,6 +129,15 @@ void showAll(sqlite3 * db)
     strcat(res, "\n");
     showInfo(db, res);
     printf("%s", res);
+}
+
+void logger(sqlite3 * db)
+{
+    char * result;
+    result = calloc(2000, sizeof(char));
+    strcat(result, "\n");
+    showLogger(db, result);
+    printf("%s", result);
 }
 
 // PARSING
@@ -248,6 +255,9 @@ bool executeCommand(sqlite3 *db, const char *command)
 
     if ((paramsCount >= 1) && (!strcmp(params[0], COMMAND_SHOW)))
         showAll(db);
+
+    if ((paramsCount >= 1) && (!strcmp(params[0], COMMAND_LOGGER)))
+        logger(db);
 
     for (i=0; i<paramsCount; i++)
         free(params[i]);

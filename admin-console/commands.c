@@ -7,7 +7,7 @@ const char *COMMON_COMMANDS[] = {COMMAND_EXIT, COMMAND_HELP,
                                  COMMAND_UNDO, COMMAND_COMMIT, COMMAND_SHOW, COMMAND_LOGGER };
 const int ADMIN_COMMANDS_COUNT = 2;
 const int OPERATOR_COMMANDS_COUNT = 1;
-const int COMMON_COMMANDS_COUNT = 8;
+const int COMMON_COMMANDS_COUNT = 9;
 
 //Last error
 int error;

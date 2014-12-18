@@ -14,9 +14,9 @@ void createNewCustomer(sqlite3 *db) {
 	int rc;
 	char *zErrMsg = 0, newLogin[30], newPassword[30], sql[200];
 	printf("Enter LOGIN and PASSWORD across space>> ");
-    if (scanf("%s %s", newLogin, newPassword) != 1)
-        return;
-	sprintf(sql, "INSERT INTO customers(login, password) VALUES('%s', '%s');", newLogin, newPassword);
+    scanf("%s %s", newLogin, newPassword);
+
+    sprintf(sql, "INSERT INTO customers(login, passsword) VALUES('%s', '%s');", newLogin, newPassword);
 	rc = sqlite3_exec(db, sql,  0, 0, &zErrMsg);
 	if (rc != SQLITE_OK){
 		fprintf(stderr, "SQL error: %s\n", zErrMsg);

@@ -20,7 +20,7 @@ static const char SHOW[] = "select login, accountID, balance, accountType, time,
         "totalTransaction from account inner join accounttype on accounttype.accountTypeID "
         "= account.accounttypeid inner join customers on  customerID = accountOwner";
 
-static const char SHOWLOGGER[] = "select operation, table_name, data FROM LOGGER";
+static const char SHOWLOGGER[] = "select operation, table_name, data, customerID FROM LOGGER";
 
 int checkBalance(sqlite3 *db, char * acc_id, double * balance);
 int managTransaction(sqlite3 * db, int trans);

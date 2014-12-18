@@ -1,11 +1,12 @@
 #include "commands.h"
 #include "dbinterface.h"
-const char *ADMIN_COMMANDS[] = {COMMAND_1, COMMAND_TRANSF};
+#include "admin_command_cust.h"
+const char *ADMIN_COMMANDS[] = {COMMAND_1, COMMAND_TRANSF, COMMAND_ADD, COMMAND_DEL};
 const char *OPERATOR_COMMANDS[] = {COMMAND_2};
 const char *COMMON_COMMANDS[] = {COMMAND_EXIT, COMMAND_HELP,
                                  COMMAND_DEB, COMMAND_CRED, COMMAND_CHCK,
                                  COMMAND_UNDO, COMMAND_COMMIT, COMMAND_SHOW, COMMAND_LOGGER };
-const int ADMIN_COMMANDS_COUNT = 2;
+const int ADMIN_COMMANDS_COUNT = 4;
 const int OPERATOR_COMMANDS_COUNT = 1;
 const int COMMON_COMMANDS_COUNT = 9;
 
@@ -57,6 +58,7 @@ void commandHelp()
     printf("\t%s - undo\n", COMMAND_UNDO);
     printf("\t%s - commit\n", COMMAND_COMMIT);
     printf("\t%s - logging\n", COMMAND_LOGGER);
+    printf("\t%s - show all account states\n", COMMAND_SHOW);
 }
 
 void command1()
@@ -109,6 +111,7 @@ void transfer(sqlite3 *db, int acc_from, int acc_to, double sum)
 {
     debit(db, acc_from, sum);
     credit(db, acc_to, sum);
+    //credit(db, acc_to, sum);
 }
 
 void checkAccount (sqlite3 *db, int acc_id)
@@ -220,9 +223,10 @@ bool executeCommand(sqlite3 *db, const char *command)
         sscanf(params[1], "%i", &from);
         sscanf(params[3], "%lf", &sum);
         sscanf(params[2], "%i", &to);
-        transfer(db, from, to, sum);
+        //transfer(db, from, to, sum);
         if (sum < 0 ) return false;
-        debit(db, to, sum);
+        debit(db, from, sum);
+        credit(db, to, sum);
     }
 
     if ((paramsCount >= 3) && (!strcmp(params[0], COMMAND_DEB)))
@@ -249,6 +253,12 @@ bool executeCommand(sqlite3 *db, const char *command)
 
     if ((paramsCount >= 1) && (!strcmp(params[0], COMMAND_UNDO)))
         undo(db);
+
+    if ((paramsCount >= 1) && (!strcmp(params[0], COMMAND_ADD)))
+        createNewCustomer(db);
+
+    if ((paramsCount >= 1) && (!strcmp(params[0], COMMAND_DEL)))
+        deleteCustomer(db);
 
     if ((paramsCount >= 1) && (!strcmp(params[0], COMMAND_COMMIT)))
         commit(db);

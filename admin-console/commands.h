@@ -1,12 +1,10 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include "sqlite3.h"
-
 #include "bool.h"
 #include "dbinterface.h"
 
@@ -21,6 +19,8 @@ static const char COMMAND_TRANSF[] = "transfer";
 static const char COMMAND_UNDO[] = "undo";
 static const char COMMAND_COMMIT[] = "cmit";
 static const char COMMAND_SHOW[] = "show";
+static const char COMMAND_ADD[] = "add";
+static const char COMMAND_DEL[] = "del";
 
 //logger
 static const char COMMAND_LOGGER[] = "logger";
@@ -42,6 +42,7 @@ void transfer(sqlite3 *db, int acc_from, int acc_to, double sum);
 void undo(sqlite3 *db);
 void commit(sqlite3 *db);
 void showAll(sqlite3 * db);
+
 
 //show login
 void logger(sqlite3 * db);

@@ -125,7 +125,7 @@ bool showInfo(sqlite3 * db, char * res)
 
 bool showLogger(sqlite3 * db, char * result){
     bool finalResult = false;
-    sqlite3_exec(db, SHOW, callbackShowInfo, (void*)result, NULL);
+    sqlite3_exec(db, SHOWLOGGER, callbackShowInfo, (void*)result, NULL);
 
     return finalResult;
 }

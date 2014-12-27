@@ -70,15 +70,15 @@ int main(int argc, char *argv[])
 
     if (argc > 1)
     {
-        //dbFilename = malloc(strlen(argv[1]) + 1);
-        //strcpy(dbFilename, argv[1]);
+        dbFilename = malloc(strlen(argv[1]) + 1);
+        strcpy(dbFilename, argv[1]);
     }
-    //else
-    //{
+    else
+    {
         dbFilename = malloc(strlen(DEFAULT_DB_FILENAME) + 1);
         strcpy(dbFilename, DEFAULT_DB_FILENAME);
         printf("using default database file: %s\n", DEFAULT_DB_FILENAME);
-   // }
+    }
 
     // open database file
     if (sqlite3_open_v2(dbFilename, &db, SQLITE_OPEN_READWRITE, NULL) == SQLITE_OK)

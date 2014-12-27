@@ -12,18 +12,20 @@ const char * MAN_QRS[] = {UPD_BALANCE, COMMIT, BEGIN, ROLLBACK, CHECK_BALANCE, S
 //Callback for checking
 static int callbackCheckAcc(void *cursum, int argc, char **argv, char **azColName)
 {
-    (void)argc;         // unused
-    (void)azColName;    // unused
     double * sum = (double*)cursum;
+    UNUSED(argc);
+    UNUSED(azColName);
+
     sscanf(argv[0], "%lf", sum);
     return 0;
 }
 
 static int callbackShowInfo(void *res, int argc, char **argv, char **azColName)
 {
-    (void)azColName;    // unused
     int i = 0;
     char * sum = (char*)res;
+    UNUSED(azColName);
+
     for (i = 0; i < argc; ++i)
     {
         strcat(sum, argv[i]);
@@ -37,9 +39,9 @@ static int callbackShowInfo(void *res, int argc, char **argv, char **azColName)
 static int callbackRowExists(void *boolParam, int argc, char **argv, char **azColName)
 {
     bool *result = (bool*)boolParam;
-
     UNUSED(argv);
     UNUSED(azColName);
+
     *result = (argc != 0);
     return 0;
 }
@@ -47,8 +49,8 @@ static int callbackRowExists(void *boolParam, int argc, char **argv, char **azCo
 static int callbackGetUserGroup(void *intParam, int argc, char **argv, char **azColName)
 {
     int *result = (int*)intParam;
-
     UNUSED(azColName);
+
     if ((argc < 1) || (sscanf(argv[0], "%d", result) != 1))
         *result = -1;
 
@@ -73,7 +75,7 @@ bool checkPassword(sqlite3 *db, const char *login, const char *password)
     char *query;
     bool result = false;
 
-    query = malloc(strlen(EXISTS_PASSWORD) + strlen(login) + 1);
+    query = malloc(strlen(EXISTS_PASSWORD) + strlen(login) + 3);
     sprintf(query,        EXISTS_PASSWORD, login, password);
     sqlite3_exec(db, query, callbackRowExists, (void*)&result, NULL);
     free(query);

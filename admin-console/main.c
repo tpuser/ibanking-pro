@@ -68,12 +68,7 @@ int main(int argc, char *argv[])
         printf("admin-console v.0.1, made by Databaser, BadComitter, Cpt. Git and Windey\n");
         printf("Designed only for Apple!\nPlease don't forget to use COMMIT and UNDO!\n");
         printf("***********************************\n");
-        pic = fopen("../applepic.txt", "rt");
-        fseek(pic, 0, SEEK_END);
-        picsize = ftell(pic);
-        fseek(pic, 0, SEEK_SET);
-        fread(applepic, picsize, sizeof(char), pic);
-        printf("%s\n", applepic);
+        system("cat ../applepic.txt");
         printf("***********************************\n");
         printf("Welcome to banking system for Apple!\n\n");
 

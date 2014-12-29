@@ -23,7 +23,7 @@
 #define MAX_PASSWORD_SIZE 64
 #define MAX_COMMAND_SIZE 256
 #define PASSWORD_RETRY_COUNT 3
-
+#define PIC_SIZE 2000
 static const char DEFAULT_DB_FILENAME[] = "../db.sqlite";
 
 void setStdinEcho(bool enable)
@@ -59,10 +59,23 @@ int main(int argc, char *argv[])
     char login[MAX_LOGIN_SIZE + 1];
     char password[MAX_PASSWORD_SIZE + 1];
     int retryCount;
-
+    FILE * pic;
     char command[MAX_COMMAND_SIZE + 1];
-    char *cmd;
-    int cmdLength;
+    char *cmd, applepic[PIC_SIZE];
+    int cmdLength, picsize;
+
+    //Hello info
+        printf("admin-console v.0.1, made by Databaser, BadComitter, Cpt. Git and Windey\n");
+        printf("Designed only for Apple!\nPlease don't forget to use COMMIT and UNDO!\n");
+        printf("***********************************\n");
+        pic = fopen("../applepic.txt", "rt");
+        fseek(pic, 0, SEEK_END);
+        picsize = ftell(pic);
+        fseek(pic, 0, SEEK_SET);
+        fread(applepic, picsize, sizeof(char), pic);
+        printf("%s\n", applepic);
+        printf("***********************************\n");
+        printf("Welcome to banking system for Apple!\n\n");
 
     // read cmdline params
     if (argc > 2)

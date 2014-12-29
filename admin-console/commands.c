@@ -1,12 +1,14 @@
 #include "commands.h"
 #include "dbinterface.h"
 #include "admin_command_cust.h"
-const char *ADMIN_COMMANDS[] = {COMMAND_1, COMMAND_TRANSF, COMMAND_ADD, COMMAND_DEL};
+const char *ADMIN_COMMANDS[] = {COMMAND_1, COMMAND_ADD, COMMAND_DEL,
+                                COMMAND_ADDACC,
+                                    COMMAND_DELACC, COMMAND_TRANSF};
 const char *OPERATOR_COMMANDS[] = {COMMAND_2};
 const char *COMMON_COMMANDS[] = {COMMAND_EXIT, COMMAND_HELP,
                                  COMMAND_DEB, COMMAND_CRED, COMMAND_CHCK,
                                  COMMAND_UNDO, COMMAND_COMMIT, COMMAND_SHOW, COMMAND_LOGGER };
-const int ADMIN_COMMANDS_COUNT = 4;
+const int ADMIN_COMMANDS_COUNT = 6;
 const int OPERATOR_COMMANDS_COUNT = 1;
 const int COMMON_COMMANDS_COUNT = 9;
 
@@ -59,6 +61,11 @@ void commandHelp()
     printf("\t%s - commit\n", COMMAND_COMMIT);
     printf("\t%s - logging\n", COMMAND_LOGGER);
     printf("\t%s - show all account states\n", COMMAND_SHOW);
+    printf("\t%s - add new customer\n", COMMAND_ADD);
+    printf("\t%s - delete customer\n", COMMAND_DEL);
+    printf("\t%s - add account for customer\n", COMMAND_ADDACC);
+    printf("\t%s - delete account for customer\n", COMMAND_DELACC);
+    printf("We love Apple!\n");
 }
 
 void command1()
@@ -128,10 +135,10 @@ void checkAccount (sqlite3 *db, int acc_id)
 void showAll(sqlite3 * db)
 {
     char * res;
-    res = calloc(2000, sizeof(char));
+    res = calloc(500, sizeof(char));
     strcat(res, "\n");
     showInfo(db, res);
-    printf("%s", res);
+   // printf("%s", res);
 }
 
 void logger(sqlite3 * db)
@@ -203,11 +210,12 @@ bool executeCommand(sqlite3 *db, const char *command)
 
     (void)db;   // unused
 
+
     // parse command
     paramsCount = countWords(command);
     params = malloc(sizeof(char*) * paramsCount);
     for (i=0; i<paramsCount; i++)
-        params[i] = getWord(command, i);
+        params[i] = getWord(command, i);            
 
     if ((paramsCount >= 1) && (!strcmp(params[0], COMMAND_HELP)))
         commandHelp();
@@ -259,6 +267,12 @@ bool executeCommand(sqlite3 *db, const char *command)
 
     if ((paramsCount >= 1) && (!strcmp(params[0], COMMAND_DEL)))
         deleteCustomer(db);
+
+    if ((paramsCount >= 1) && (!strcmp(params[0], COMMAND_DELACC)))
+        deleteAccount(db);
+
+    if ((paramsCount >= 1) && (!strcmp(params[0], COMMAND_ADDACC)))
+        addAccount(db);
 
     if ((paramsCount >= 1) && (!strcmp(params[0], COMMAND_COMMIT)))
         commit(db);

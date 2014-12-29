@@ -16,7 +16,7 @@ static const char COMMIT[] = "commit;";
 static const char ROLLBACK[] = "rollback;";
 static const char BEGIN[] = "begin;";
 static const char CHECK_BALANCE[] = "select balance from account where accountid = %s;";
-static const char SHOW[] = "select login, accountID, balance, accountType, time, "
+static const char SHOW[] = "select login, accountID, balance, accountType, "
         "totalTransaction from account inner join accounttype on accounttype.accountTypeID "
         "= account.accounttypeid inner join customers on  customerID = accountOwner;";
 

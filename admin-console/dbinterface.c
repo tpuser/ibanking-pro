@@ -23,16 +23,18 @@ static int callbackCheckAcc(void *cursum, int argc, char **argv, char **azColNam
 static int callbackShowInfo(void *res, int argc, char **argv, char **azColName)
 {
     int i = 0;
-    char * sum = (char*)res;
+    //char * sum = (char*)res;
+    char * sum1;
     UNUSED(azColName);
-
+    sum1 = calloc(1000, sizeof(char));
     for (i = 0; i < argc; ++i)
     {
-        strcat(sum, argv[i]);
-        strcat(sum, " ");
+        strcat(sum1, argv[i]);
+        strcat(sum1, " ");
 
     }
-    strcat(sum, "\n");
+    strcat(sum1, "\n");
+    printf("%s",sum1);
     return 0;
 }
 

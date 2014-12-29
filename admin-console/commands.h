@@ -21,6 +21,8 @@ static const char COMMAND_COMMIT[] = "cmit";
 static const char COMMAND_SHOW[] = "show";
 static const char COMMAND_ADD[] = "add";
 static const char COMMAND_DEL[] = "del";
+static const char COMMAND_ADDACC[] = "addacc";
+static const char COMMAND_DELACC[] = "delacc";
 
 //logger
 static const char COMMAND_LOGGER[] = "logger";

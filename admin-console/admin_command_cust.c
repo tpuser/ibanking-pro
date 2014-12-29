@@ -1,5 +1,6 @@
 #include "admin_command_cust.h"
-
+#include "math.h"
+#include "time.h"
 static int callbackLoginCustomer(void *NotUsed, int argc, char **argv, char **azColName){
 	int* id = (int*)NotUsed;
     (void)azColName;        // unused
@@ -47,19 +48,20 @@ void deleteCustomer(sqlite3 *db) {
 
 void deleteAccount(sqlite3 *db) {
 	int idAccount;
-	char sql[200], *zErrMsg = 0;
+    char *sql, *zErrMsg = 0;
 	printf("Enter ACCOUNT ID >> ");
     if (scanf("%d", &idAccount) != 1)
         return;
+    sql = calloc(200, sizeof(char));
 	sprintf(sql, "DELETE FROM account WHERE  (accountID = '%d');", idAccount);
     sqlite3_exec(db, sql,  0, 0, &zErrMsg);
 }
 
 void addAccount(sqlite3 *db) {
-	int rc, checkLogin, typeAccount;
-	char *zErrMsg = 0, newLogin[30], sql[200];
+    int rc, checkLogin, typeAccount, rnd;
+    char *zErrMsg = 0, newLogin[30], *sql;
 	float balance;
-
+    sql = calloc(250, sizeof(char));
 	printf("Enter LOGIN >> ");
     if (scanf("%s", newLogin) != 1)
         return;
@@ -80,13 +82,14 @@ void addAccount(sqlite3 *db) {
 		printf("Enter BALANCE new account >> ");
         if ((scanf("%f", &balance) == 1) && (balance < 0))
 			balance = 0;
-
+        srand(time(NULL));
+        rnd = (int)rand()%1000000;
 		if(typeAccount == 0) 
-			sprintf(sql, "INSERT INTO account(balance, totalTransaction, accountTypeID, customerID) VALUES('%f', '0', '%d', '%d');", balance, typeAccount, checkLogin);
+            sprintf(sql, "INSERT INTO account(accountID,balance, time,totalTransaction, accountTypeID, accountOwner) VALUES('%d','%f', '0', '0', '%d', '%d');", rnd,balance, typeAccount, checkLogin);
 		else if(typeAccount == 1) 
-			sprintf(sql, "INSERT INTO account(balance, accountTypeID, customerID) VALUES('%f', '%d', '%d');", balance, typeAccount, checkLogin);
+            sprintf(sql, "INSERT INTO account(accountID,balance, time,totalTransaction,accountTypeID, accountOwner) VALUES('%d','%f', '0', '0','%d', '%d');", rnd,balance, typeAccount, checkLogin);
 		else if(typeAccount == 2)
-			sprintf(sql, "INSERT INTO account(balance, time, accountTypeID, customerID) VALUES('%f', '0', '%d', '%d');", balance, typeAccount, checkLogin);
+            sprintf(sql, "INSERT INTO account(accountID,balance, time, totalTransaction,accountTypeID, accountOwner) VALUES('%d','%f', '0', '0',%d', '%d');", rnd,balance, typeAccount, checkLogin);
 		
 
 		rc = sqlite3_exec(db, sql,  0, 0, &zErrMsg);
